@@ -5,3 +5,5 @@ notex.txt
 **/__pycache__/
 
 **.idea/
+
+config.cfg
