@@ -1,8 +1,10 @@
 notex.txt
 
 .ipynb_checkpoints
+*.ipynb
 
 **/__pycache__/
+*.pyc
 
 **.idea/
 
