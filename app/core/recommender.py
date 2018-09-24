@@ -1,17 +1,23 @@
-import io
+import pandas as pd
+import numpy as np
+import os
+from surprise import NormalPredictor
+from surprise import Reader
+from surprise.model_selection import cross_validate
 from surprise import KNNBaseline
 from surprise import Dataset
 from surprise import get_dataset_dir
 
-MOVIES_DATA_PATH = get_dataset_dir() + '/ml-100k/ml-100k/u.item'
-MOVIE_ID_INDEX = 0
-MOVIE_NAME_INDEX = 1
-MOVIE_RELEASE_DATE_INDEX = 2
+FILE_PATH_RATINGS = os.path.expanduser('../data/training_data.csv')
+file_path_movies = os.path.expanduser('../data/movies_data.csv')
+file_path_users = os.path.expanduser('../data/ml-100k/u.user')
 
 
 class Recommender:
 
     def __init__(self):
+        self.training_set = self.__load_training_set()
+        self.movies_set = self.__load_movies_set()
         self.train_model()
         self.movie_id_to_name = self._load_movies_info()
 
@@ -41,3 +47,9 @@ class Recommender:
                 movie_name_str = movie_row[MOVIE_NAME_INDEX]
                 movie_id_to_name[movie_id_str] = movie_name_str
         return movie_id_to_name
+
+    def __load_training_set(self):
+        return pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
+
+    def __load_movies_set(self):
+        return pd.read_csv(file_path_movies, delimiter=';', encoding='latin-1')
