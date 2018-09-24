@@ -3,3 +3,7 @@ numpy
 scikit-surprise
 Flask
 flask_cors
+pymongo
+configparser
+pandas
+requests
