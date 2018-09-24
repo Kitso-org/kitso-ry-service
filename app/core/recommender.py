@@ -8,9 +8,10 @@ from surprise.model_selection import cross_validate
 from surprise import KNNBaseline
 from surprise import Dataset
 from surprise import get_dataset_dir
+from flask import jsonify
 
-FILE_PATH_RATINGS = os.path.expanduser('../data/training_data.csv')
-FILE_PATH_MOVIES = os.path.expanduser('../data/movies_data.csv')
+FILE_PATH_RATINGS = os.path.expanduser('data/training_data.csv')
+FILE_PATH_MOVIES = os.path.expanduser('data/movies_data.csv')
 
 
 class Recommender:
@@ -75,7 +76,10 @@ class Recommender:
         rating_preditions = self.__filter_by_movies_saved_in_kitso(
             rating_preditions)
 
-        return sorted(rating_preditions, key=itemgetter(1), reverse=True)[:n]
+        sorted_preditions = sorted(
+            rating_preditions, key=itemgetter(1), reverse=True)[:n]
+
+        return jsonify(sorted_preditions)
 
     def __load_training_set(self):
         reader = Reader(rating_scale=(1, 5))
