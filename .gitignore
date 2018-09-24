@@ -14,3 +14,6 @@ config.cfg
 **/config.ini
 
 **/ml-100k
+
+**.RData
+**.Rhistory
