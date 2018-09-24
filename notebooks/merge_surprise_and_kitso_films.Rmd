@@ -1,0 +1,53 @@
+
+You need to download Surprise traning data of 100k and put the extracted ml-100k directory under the data directory.
+
+```{r}
+library(readr)
+library(dplyr)
+```
+
+Mergind Kitso and Surprise movies
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
+kitso_movies_data <- read_delim("../data/kitso_movies_data.csv",";", escape_double = FALSE, trim_ws = TRUE)
+surprise_item <- read_delim("../data/ml-100k/u.item", "|", escape_double = FALSE, trim_ws = TRUE)
+
+surprise_item = surprise_item[,1:3]
+colnames(surprise_item) = c("id", "title_year", "release_date")
+
+merged_movies_data = merge(kitso_movies_data, surprise_item, by="title_year", all.x = TRUE)
+merged_movies_data = merged_movies_data %>%
+  mutate(id = ifelse(
+    is.na(id), kitso_id, id
+  )) %>%
+  select(-release_date)
+
+write.csv2(merged_movies_data, "../data/movies_data.csv", row.names = FALSE)
+```
+
+Building final training data with Surprise and Kitso ratings
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, error=FALSE}
+library(tidyverse)
+
+surprise_data <- read_delim("../data/ml-100k/u.data", "\t", escape_double = FALSE, trim_ws = TRUE)
+kitso_data <- read_delim("../data/kitso_data.csv", ";", escape_double = FALSE, trim_ws = TRUE)
+
+colnames(surprise_data) = c("item_id","user_id", "rating", "timestamp")
+
+map_ids = merge(kitso_movies_data, surprise_item, by="title_year") %>% select(id, kitso_id)
+
+train_data = rbind(surprise_data %>% select(-timestamp), kitso_data)
+
+temp_df = merge(train_data, map_ids, by.x=c("item_id"), by.y=c("id"), all.x = TRUE) 
+
+train_data = temp_df %>%
+  mutate(item_id = ifelse(is.na(kitso_id), item_id, kitso_id)) %>%
+  mutate(rating = as.character(rating)) %>%
+  mutate(rating = str_replace_all(rating,"[[:punct:]]", ".")) %>%
+  select(-kitso_id)
+
+write.csv2(train_data, "../data/training_data.csv", row.names = FALSE)
+```
+
+
