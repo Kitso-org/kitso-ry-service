@@ -12,5 +12,6 @@ def getRecommendation():
     user_id = req_data['user_id']
     n_to_return = req_data['n']
 
-    recommended = recommender.get_top_n_recommended(user_id, n_to_return)
+    recommended = recommender.get_top_n_recommended_movies(
+        user_id, n_to_return)
     return recommended
