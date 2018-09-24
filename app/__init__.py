@@ -7,5 +7,9 @@ CORS(app)
 
 from app import api
 
-conf_filepath = os.path.join(app.root_path, '../config.cfg')
-app.config.from_pyfile(conf_filepath)
+env = os.environ.get('ENV')
+if env == 'prod':
+    app.config.from_object('app.config.env_settings.ProductionConfig')
+elif env == 'dev':
+    conf_filepath = os.path.join(app.root_path, '../config.cfg')
+    app.config.from_pyfile(conf_filepath)
