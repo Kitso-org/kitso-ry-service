@@ -16,7 +16,8 @@ file_path_users = os.path.expanduser('../data/ml-100k/u.user')
 class Recommender:
 
     def __init__(self):
-        self.training_set = self.__load_training_set()
+        self.__load_training_set()
+        self.ratings_set = self.__load_rating_data_set()
         self.movies_set = self.__load_movies_set()
         self.train_model()
         self.movie_id_to_name = self._load_movies_info()
@@ -49,7 +50,13 @@ class Recommender:
         return movie_id_to_name
 
     def __load_training_set(self):
-        return pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
+        reader = Reader(rating_scale=(1, 5))
+        data = Dataset.load_from_df(
+            self.ratings_set[['user_id', 'item_id', 'rating']], reader)
+        self.training_set = data.build_full_trainset()
 
     def __load_movies_set(self):
         return pd.read_csv(file_path_movies, delimiter=';', encoding='latin-1')
+
+    def __load_rating_data_set(self):
+        return pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
