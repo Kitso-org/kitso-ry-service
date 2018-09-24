@@ -79,7 +79,9 @@ class Recommender:
         sorted_preditions = sorted(
             rating_preditions, key=itemgetter(1), reverse=True)[:n]
 
-        return jsonify(sorted_preditions)
+        response = self.movies_set[self.movies_set.id.isin(sorted_preditions)]
+
+        return jsonify(response.to_dict('records'))
 
     def __load_training_set(self):
         reader = Reader(rating_scale=(1, 5))
