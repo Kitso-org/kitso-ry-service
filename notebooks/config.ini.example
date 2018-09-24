@@ -1,0 +1,4 @@
+[DEFAULT]
+DB_USER = myDbUser
+DB_NAME = myDatabaseName
+DB_PASS = myDbPass
