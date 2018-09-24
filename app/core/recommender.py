@@ -16,18 +16,13 @@ file_path_users = os.path.expanduser('../data/ml-100k/u.user')
 class Recommender:
 
     def __init__(self):
-        self.__load_training_set()
-        self.ratings_set = self.__load_rating_data_set()
-        self.movies_set = self.__load_movies_set()
+        self.__load_rating_data_set()
+        self.__load_movies_set()
         self.train_model()
         self.movie_id_to_name = self._load_movies_info()
 
     def train_model(self):
-        # Load the movielens-100k dataset (download it if needed).
-        self.data = Dataset.load_builtin('ml-100k')
-
-        # Spliting data in train (85%) and test (15%)
-        self.training_set = self.data.build_full_trainset()
+        self.__load_training_set()
 
         # Using KNN
         sim_options = {'name': 'pearson_baseline', 'user_based': True}
@@ -56,7 +51,8 @@ class Recommender:
         self.training_set = data.build_full_trainset()
 
     def __load_movies_set(self):
-        return pd.read_csv(file_path_movies, delimiter=';', encoding='latin-1')
+        self.movies_set = pd.read_csv(
+            file_path_movies, delimiter=';', encoding='latin-1')
 
     def __load_rating_data_set(self):
-        return pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
+        self.ratings_set = pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
