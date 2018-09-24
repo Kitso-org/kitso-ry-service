@@ -1,16 +1,16 @@
 notex.txt
 
 .ipynb_checkpoints
-*.ipynb
 
 **/__pycache__/
 *.pyc
 
 **.idea/
 
-
 config.cfg
 
-
+**.csv
 
 **/config.ini
+
+**/ml-100k
