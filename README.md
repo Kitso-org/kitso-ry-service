@@ -1,2 +1,3 @@
 # kitso-ry-service
-Kitso movie recommendations service
+
+run `python main.py` to start app.
