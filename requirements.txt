@@ -1,6 +1,5 @@
-surprise==0.1
+
 numpy
-scikit-surprise
 Flask
 flask_cors
 pymongo

@@ -10,8 +10,12 @@ from surprise import Dataset
 from surprise import get_dataset_dir
 from flask import jsonify
 
-FILE_PATH_RATINGS = os.path.expanduser('data/training_data.csv')
-FILE_PATH_MOVIES = os.path.expanduser('data/movies_data.csv')
+import os
+working_dir = os.getcwd()
+print("uen --------------------------------")
+
+FILE_PATH_RATINGS = working_dir + "/../data/training_data.csv"
+FILE_PATH_MOVIES = working_dir + "/../data/movies_data.csv"
 
 
 class Recommender:

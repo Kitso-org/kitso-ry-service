@@ -1,6 +1,12 @@
-from flask import Flask, request, jsonify
+import os
+from flask import Flask
+from flask_cors import CORS, cross_origin
+
+app = Flask(__name__)
+CORS(app)
+
+from flask import request, jsonify
 from core.recommender import Recommender
-from pythonanyapp import app
 
 recommender = Recommender()
 
@@ -16,6 +22,7 @@ def getRecommendation():
         user_id, n_to_return)
     return recommended
 
-@app.route('/teste', methods=['GET'])
+
+@app.route('/test', methods=['GET'])
 def getTest():
     return "Live"

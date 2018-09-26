@@ -1,3 +1,0 @@
-SERVER_NAME = "127.0.0.1:<PORT>"
-DEBUG = True
-PORT = <PORT>
