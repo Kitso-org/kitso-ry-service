@@ -9,13 +9,17 @@ from surprise import KNNBaseline
 from surprise import Dataset
 from surprise import get_dataset_dir
 from flask import jsonify
-
+import requests
+import json
 import os
+
 working_dir = os.getcwd()
-print("uen --------------------------------")
 
 FILE_PATH_RATINGS = working_dir + "/../data/training_data.csv"
 FILE_PATH_MOVIES = working_dir + "/../data/movies_data.csv"
+
+ENDPOINT_IS_WATCHED = "http://kitso.herokuapp.com/api/watched?" 
+QUERY_USER = "user="
 
 
 class Recommender:
@@ -55,6 +59,11 @@ class Recommender:
         movies_id = list(map(lambda tupl: tupl[0], preditions))
         return list(filter(lambda movie_id: movie_id in kitso_movies_ids, movies_id))
 
+    def __filter_by_not_watched_movies(self, user_id, preditions):
+        not_wactched = self.__get_watched_movies_ids(user_id)
+        movies_id = list(map(lambda tupl: tupl[0], preditions))
+        return list(filter(lambda movie_id: movie_id not in not_wactched, movies_id))
+
     def __search_in_list_of_tuples(self, elem, list_tuples):
         tuples_with_elem = list(filter(lambda tup: elem in tup, list_tuples))
         return elem if len(tuples_with_elem) > 0 else False
@@ -74,11 +83,13 @@ class Recommender:
     def get_top_n_recommended_movies(self, user_id, n=5):
 
         not_rated = self.__get_not_rated_movies(user_id)
-
+    
         rating_preditions = self.__predict_rating(user_id, not_rated)
 
         rating_preditions = self.__filter_by_movies_saved_in_kitso(
             rating_preditions)
+
+        rating_preditions = self.__filter_by_not_watched_movies(user_id, rating_preditions)
 
         sorted_preditions = sorted(
             rating_preditions, key=itemgetter(1), reverse=True)[:n]
@@ -99,3 +110,15 @@ class Recommender:
 
     def __load_rating_data_set(self):
         self.ratings_set = pd.read_csv(FILE_PATH_RATINGS, delimiter=';')
+
+    def __get_watched_movies_ids(self, user_id):
+        ids = []
+        watched_list = self.__get_watched_movies(user_id)
+        for movie_json in watched_list:
+            movie_id = movie_json['_media']['_id']
+            ids.append(movie_id)
+        return ids
+
+    def __get_watched_movies(self, user_id):
+        req_w = requests.get(ENDPOINT_IS_WATCHED + QUERY_USER + user_id)
+        return json.loads(req_w.text)
